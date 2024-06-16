@@ -8,7 +8,7 @@ Help your LLM apps escape the chat box!
 
 ## Demos
 
-### Skye: A friendly emotional health chatbot
+### Skye: A friendly emotional-health chatbot
 
 https://github.com/Cutwell/generative-ui/assets/22395357/0161971f-e770-4d19-9201-27d6fcb325e0
 
