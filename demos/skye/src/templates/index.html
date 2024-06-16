@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {%if page.name %}
+    <title>{{page.name}}</title>
+    {% endif %}
+    {%if page.icon %}
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>{{page.icon}}</text></svg>">
+    {% endif %}
+
+    <meta http-equiv='cache-control' content='no-cache'>
+    <meta http-equiv='expires' content='0'>
+    <meta http-equiv='pragma' content='no-cache'>
+    {%if page.css %}
+    {% for url in page.css %}
+    {% set href = url %}
+    <link rel="stylesheet" type="text/css" href="{{href}}">
+    {% endfor %}
+    {% endif %}
+    <style>
+        #loading-wrapper,
+        .popup-wrapper {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            text-align: center;
+        }
+
+        .popup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            border-radius: 5px;
+            background-color: initial;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            background-color: #ffffff;
+            color: #000;
+            z-index: 10000;
+        }
+
+        .popup a,
+        .popup a:visited {
+            background-color: #ffffff;
+            color: #000;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .lds-ellipsis {
+            display: inline-block;
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .lds-ellipsis div {
+            position: absolute;
+            top: 33px;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: #fff;
+            animation-timing-function: cubic-bezier(0, 1, 1, 0);
+        }
+
+        .lds-ellipsis div:nth-child(1) {
+            left: 8px;
+            animation: lds-ellipsis1 0.6s infinite;
+        }
+
+        .lds-ellipsis div:nth-child(2) {
+            left: 8px;
+            animation: lds-ellipsis2 0.6s infinite;
+        }
+
+        .lds-ellipsis div:nth-child(3) {
+            left: 32px;
+            animation: lds-ellipsis2 0.6s infinite;
+        }
+
+        .lds-ellipsis div:nth-child(4) {
+            left: 56px;
+            animation: lds-ellipsis3 0.6s infinite;
+        }
+
+        @keyframes lds-ellipsis1 {
+            0% {
+                transform: scale(0);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes lds-ellipsis3 {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(0);
+            }
+        }
+
+        @keyframes lds-ellipsis2 {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(24px, 0);
+            }
+        }
+
+        /* Container for the chat messages */
+        .chat-container {
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            max-width: 100%;
+            overflow-y: scroll;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        /* Style for the assistant's message */
+        .assistant {
+            align-self: flex-start;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            max-width: 70%;
+            /* Adjust as needed */
+        }
+
+        .assistant:before {
+            content: "☀️ Skye";
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Style for the user's message */
+        .user {
+            align-self: flex-end;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            max-width: 70%;
+            /* Adjust as needed */
+        }
+
+        .user:before {
+            content: "👤 You";
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .submitButton {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        /* Default to light mode with a thin black border */
+        .chat-container {
+            border: 1px solid #dbdbdb;
+        }
+
+        /* Dark mode with a thin white border */
+        @media (prefers-color-scheme: dark) {
+            .chat-container {
+                border: 1px solid #526980;
+            }
+        }
+
+        footer{
+            padding-top: 0 !important;
+            margin-top: 0 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div id="loading-wrapper">
+            <div class="lds-ellipsis">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="content">
+            <form id="mainForm" method="post" action="/submit">
+                <div class="chat-container" id="chatbox">
+                    {{form | safe}}
+                </div>
+            </form>
+            <form id="resetForm" method="post" action="/reset"></form>
+            <div id="response"></div>
+            <p><input class="submitButton" type="submit" value="Submit" form="mainForm" id="mainFormButton"> <input
+                    class="submitButton" type="submit" value="Reset" form="resetForm" id="resetFormButton">
+            </p>
+        </div>
+
+        <div id="popup-wrapper-1" class="popup-wrapper">
+            <div class="popup">
+                <div class="close-button">&times;</div>
+                <h3 class="center">About</h3>
+                <hr>
+                {% if about.author %}
+                <p>
+                    Author: {{about.author}}
+                    {% if about.profile %}
+                    (<a target="_blank" href="{{about.profile}}">profile</a>)
+                    {% endif %}
+                </p>
+                {% endif %}
+                {% if about.description %}
+                <p>Description: {{about.description}}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div id="popup-wrapper-2" class="popup-wrapper">
+            <div class="popup">
+                <div class="close-button">&times;</div>
+                <h3 class="center">Help</h3>
+                <hr>
+                <div class="center">
+                    {% if project.homepage %}
+                    <a target="_blank" href="{{project.homepage}}">Homepage</a> |
+                    {% endif %}
+                    {% if project.license %}
+                    <a target="_blank" href="{{project.license}}">License</a> |
+                    {% endif %}
+                    {% if project.issues %}
+                    <a target="_blank" href="{{project.issues}}">Report an issue</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="center">
+        <p>
+            Created with <a target="_blank"
+                href="https://github.com/Cutwell/generative-ui"><code>Generative UI</code></a> |
+            <a href="#" id="open-popup-1">About</a> |
+            <a href="#" id="open-popup-2">Help</a>
+        </p>
+    </footer>
+
+    <script>
+        const form = document.querySelector('#mainForm');
+        const spinnerWrapper = document.querySelector('#loading-wrapper')
+
+        form.addEventListener('submit', () => {
+            spinnerWrapper.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        });
+
+        form.addEventListener('load', () => {
+            spinnerWrapper.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+    </script>
+
+    <script>
+        const popupWrappers = document.querySelectorAll('.popup-wrapper');
+        const popups = document.querySelectorAll('.popup');
+        const closeButtons = document.querySelectorAll('.close-button');
+
+        function openPopup(popupWrapper) {
+            popupWrapper.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePopup(popupWrapper) {
+            popupWrapper.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        popups.forEach(function (popup) {
+            popup.addEventListener('click', function (event) {
+                event.stopPropagation();
+            });
+        });
+
+        popupWrappers.forEach(function (popupWrapper, index) {
+            popupWrapper.addEventListener('click', function () {
+                closePopup(popupWrapper);
+            });
+
+            closeButtons[index].addEventListener('click', function () {
+                closePopup(popupWrapper);
+            });
+        });
+
+        const popup1 = document.querySelector('#popup-wrapper-1');
+        const popup2 = document.querySelector('#popup-wrapper-2');
+
+        document.querySelector('#open-popup-1').addEventListener('click', function () {
+            openPopup(popup1);
+        });
+
+        document.querySelector('#open-popup-2').addEventListener('click', function () {
+            openPopup(popup2);
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('mainForm');
+            const chatbox = document.getElementById('chatbox')
+
+            form.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                const formData = new FormData(form);
+                const formObject = {};
+
+                formData.forEach((value, key) => {
+                    formObject[key] = value;
+                });
+
+                fetch('http://127.0.0.1:8000/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formObject),
+                })
+                    .then(response => response.json()) // Expecting JSON response
+                    .then(data => {
+                        chatbox.insertAdjacentHTML('beforeend', data.content);
+                        const spinnerWrapper = document.querySelector('#loading-wrapper')
+                        spinnerWrapper.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+
+                        const userElements = chatbox.querySelectorAll('.user');
+                        const lastUserElement = userElements[userElements.length - 1];
+                        lastUserElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('response').innerText = 'An error occurred while submitting the form.';
+                        const spinnerWrapper = document.querySelector('#loading-wrapper')
+                        spinnerWrapper.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                    });
+            });
+        });
+    </script>
+</body>
+
+</html>
