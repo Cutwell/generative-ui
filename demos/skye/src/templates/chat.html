@@ -189,93 +189,18 @@
         #profileLink {
             text-decoration: underline;
         }
-    </style>
-    <style>
-        .container {
-            width: 80%;
-            margin: 0 auto;
-            text-align: center;
-            padding: 20px;
-        }
 
-        .logo {
-            font-size: 3em;
-        }
-
-        .content {
-            margin: 40px 0;
-        }
-
-        .content h2 {
-            font-size: 2em;
-        }
-        .skyblue {
-            color: skyblue;
-        }
-
-        .content p {
-            font-size: 1.2em;
-            line-height: 1.6;
-        }
-
-        button {
+        button, input[type="submit"] {
             background-color: skyblue;
             color: white;
-            padding: 15px 25px;
-            font-size: 1.2em;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             margin-top: 20px;
         }
 
-        button:hover {
+        button:hover, input[type="submit"]:hover {
             background-color: deepskyblue;
-        }
-
-        .thought {
-            display: flex;
-            background-color: skyblue;
-            padding: 20px;
-            border-radius: 30px;
-            min-width: 40px;
-            max-width: 220px;
-            min-height: 40px;
-            margin: 20px;
-            position: relative;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-
-        .thought:before,
-        .thought:after {
-            content: "";
-            background-color: skyblue;
-            border-radius: 50%;
-            display: block;
-            position: absolute;
-            z-index: -1;
-        }
-
-        .thought:before {
-            width: 44px;
-            height: 44px;
-            top: -12px;
-            left: 28px;
-            box-shadow: -50px 30px 0 -12px skyblue;
-        }
-
-        .thought:after {
-            bottom: -10px;
-            right: 26px;
-            width: 30px;
-            height: 30px;
-            box-shadow: 40px -34px 0 0 skyblue,
-                -28px -6px 0 -2px skyblue,
-                -24px 17px 0 -6px skyblue,
-                -5px 25px 0 -10px skyblue;
-
         }
     </style>
 </head>
@@ -293,14 +218,17 @@
 
         <br>
 
-        <div class="container">
-            <div class="content">
-                <div class="thought logo">☀️💬</div>
-                <h2>Welcome! Meet <i class="skyblue">Skye</i></h2>
-                <p>Your personal emotional health companion. Skye is here to help you navigate your feelings and improve
-                    your emotional well-being. Chat with Skye anytime, anywhere.</p>
-                <button class="cta-button" id="demoButton">Get Started</button>
-            </div>
+        <div class="content">
+            <form id="mainForm" method="post" action="/submit">
+                <div class="chat-container" id="chatbox">
+                    {{form | safe}}
+                </div>
+            </form>
+            <div id="response"></div>
+            <p><input class="submitButton" type="submit" value="Submit" form="mainForm" id="mainFormButton"> <input
+                    class="submitButton" type="submit" value="Reset Chat" id="resetButton"> <input class="submitButton"
+                    type="submit" value="Return Home" id="homeButton">
+            </p>
         </div>
 
         <div id="popup-wrapper-1" class="popup-wrapper">
@@ -341,6 +269,32 @@
             </div>
         </div>
 
+        <div id="popup-wrapper-3" class="popup-wrapper">
+            <div class="popup">
+                <div class="close-button">&times;</div>
+                <h3 class="center">⚙️ LLM Settings</h3>
+                <hr>
+                <div class="center">
+                    <form id="settingsForm" method="post" action="/settings">
+                        <label for="model">Choose a model:</label>
+                        <select id="model" name="model">
+                            <option value="llama3">Ollama Llama 3</option>
+                            <option value="gpt-3.5-turbo">OpenAI (gpt-3.5-turbo)</option>
+                        </select>
+
+                        <div id="openai-fields">
+                            <label for="api-token">API Token:</label>
+                            <input type="password" id="api-token" name="api-token" />
+                        </div>
+
+                        <div id="settingsResponse"></div>
+
+                        <button type="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <footer class="center">
@@ -348,9 +302,25 @@
             Powered by <a target="_blank" href="https://github.com/Cutwell/generative-ui"><code>Generative UI</code></a>
             |
             <a href="#" id="open-popup-1">☀️ About</a> |
-            <a href="#" id="open-popup-2">🛟 Help</a>
+            <a href="#" id="open-popup-2">🛟 Help</a> |
+            <a href="#" id="open-popup-3">⚙️ LLM Settings</a>
         </p>
     </footer>
+
+    <script>
+        const form = document.querySelector('#mainForm');
+        const spinnerWrapper = document.querySelector('#loading-wrapper')
+
+        form.addEventListener('submit', () => {
+            spinnerWrapper.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        });
+
+        form.addEventListener('load', () => {
+            spinnerWrapper.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+    </script>
 
     <script>
         const popupWrappers = document.querySelectorAll('.popup-wrapper');
@@ -385,6 +355,7 @@
 
         const popup1 = document.querySelector('#popup-wrapper-1');
         const popup2 = document.querySelector('#popup-wrapper-2');
+        const popup3 = document.querySelector('#popup-wrapper-3');
 
         document.querySelector('#open-popup-1').addEventListener('click', function () {
             openPopup(popup1);
@@ -393,12 +364,115 @@
         document.querySelector('#open-popup-2').addEventListener('click', function () {
             openPopup(popup2);
         });
+
+        document.querySelector('#open-popup-3').addEventListener('click', function () {
+            document.getElementById('settingsResponse').innerText = ""
+            openPopup(popup3);
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('mainForm');
+            const chatbox = document.getElementById('chatbox')
+
+            form.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                const formData = new FormData(form);
+                const formObject = {};
+
+                formData.forEach((value, key) => {
+                    formObject[key] = value;
+                });
+
+                fetch(`http://127.0.0.1:8000/chat/${GUID}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formObject),
+                })
+                    .then(response => response.json()) // Expecting JSON response
+                    .then(data => {
+                        chatbox.insertAdjacentHTML('beforeend', data.content);
+                        const spinnerWrapper = document.querySelector('#loading-wrapper')
+                        spinnerWrapper.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+
+                        const userElements = chatbox.querySelectorAll('.user');
+                        const lastUserElement = userElements[userElements.length - 1];
+                        lastUserElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                    })
+                    .catch(error => {
+                        console.error('Error: ', error);
+                        document.getElementById('response').innerText = 'Error: ' + error;
+                        const spinnerWrapper = document.querySelector('#loading-wrapper')
+                        spinnerWrapper.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                    });
+            });
+        });
     </script>
 
     <script>
+        document.getElementById('model').addEventListener('change', function () {
+            document.getElementById('settingsResponse').innerText = '';
+            if (this.value === 'gpt-3.5-turbo') {
+                document.getElementById('openai-fields').style.display = 'block';
+                document.getElementById('api-token').setAttribute('required', '');
+            } else {
+                document.getElementById('openai-fields').style.display = 'none';
+                document.getElementById('api-token').inputField.removeAttribute('required');
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('demoButton').addEventListener("click", function () {
-                window.location.href = `/new`;
+            const form = document.getElementById('settingsForm');
+
+            form.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                const formData = new FormData(form);
+                const formObject = {};
+
+                formData.forEach((value, key) => {
+                    formObject[key] = value;
+                });
+
+                fetch(`http://127.0.0.1:8000/settings/${GUID}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formObject),
+                })
+                    .then(response => response.json()) // Expecting JSON response
+                    .then(data => {
+                        console.error('Response: ', data.response);
+                        document.getElementById('settingsResponse').innerText = data.response;
+                    })
+                    .catch(error => {
+                        console.error('Error: ', error);
+                        document.getElementById('settingsResponse').innerText = 'Error: ' + error;
+                    });
+            });
+        });
+    </script>
+
+    <script>
+        const urlPath = window.location.pathname;
+        const segments = urlPath.split('/');
+        const GUID = segments[segments.length - 1];
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('resetButton').addEventListener("click", function () {
+                window.location.href = `/reset/${GUID}`;
+            });
+        })
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('homeButton').addEventListener("click", function () {
+                window.location.href = `/`;
             });
         })
     </script>
