@@ -23,34 +23,20 @@
     {% endif %}
 
     <link rel="stylesheet" type="text/css" href="/static/styles/shared.css">
-    <link rel="stylesheet" type="text/css" href="/static/styles/chat.css">
+    <link rel="stylesheet" type="text/css" href="/static/styles/index.css">
 </head>
 
 <body>
     <main>
-        <div class="popup-wrapper" id="loading-wrapper">
-            <div class="lds-ellipsis">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-        </div>
-
         <br>
 
-        <div class="content">
-            <form id="mainForm" method="post" action="/submit">
-                <div class="chat-container" id="chatbox">
-                    {{form | safe}}
-                </div>
-            </form>
-            <div id="response"></div>
-            <p>
-                <button class="button-primary" type="submit" form="mainForm" id="mainFormButton">Submit</button>
-                <button type="submit" id="resetButton">Reset Chat</button>
-                <button type="submit" id="homeButton">Return Home</button>
-            </p>
+        <div class="container">
+            <div class="content">
+                <div class="logo">🪶💬</div>
+                <h2>"Honk", <i class="goosegreen">welcomingly.</i></h2>
+                <p>"Honk", <i>explaining.</i></p>
+                <button class="cta-button" id="demoButton">"Honk", <i>inviting.</i></button>
+            </div>
         </div>
 
         <div id="popup-wrapper-1" class="popup-wrapper">
@@ -91,32 +77,6 @@
             </div>
         </div>
 
-        <div id="popup-wrapper-3" class="popup-wrapper">
-            <div class="popup">
-                <div class="close-button">&times;</div>
-                <h3 class="center">⚙️ LLM Settings</h3>
-                <hr>
-                <div class="center">
-                    <form id="settingsForm" method="post" action="/settings">
-                        <label for="model">Choose a model:</label>
-                        <select id="model" name="model">
-                            <option value="llama3">Ollama Llama 3</option>
-                            <option value="gpt-3.5-turbo">OpenAI (gpt-3.5-turbo)</option>
-                        </select>
-
-                        <div id="openai-fields">
-                            <label for="api-token">API Token:</label>
-                            <input type="password" id="api-token" name="api-token" />
-                        </div>
-
-                        <div id="settingsResponse"></div>
-
-                        <button type="submit">Submit</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-
     </main>
 
     <footer class="center">
@@ -124,21 +84,17 @@
             Powered by <a target="_blank" href="https://github.com/Cutwell/generative-ui"><code>Generative UI</code></a>
             |
             <a href="#" id="open-popup-1">☀️ About</a> |
-            <a href="#" id="open-popup-2">🛟 Help</a> |
-            <a href="#" id="open-popup-3">⚙️ LLM Settings</a>
+            <a href="#" id="open-popup-2">🛟 Help</a>
         </p>
     </footer>
 
-    <script src="/static/scripts/getGUID.js"></script>
-
-    <script src="/static/scripts/loadingWrapperTriggers.js"></script>
-
     <script src="/static/scripts/popups.js"></script>
+
+    <script src="/static/scripts/demoButton.js"></script>
 
     <script>
         const popup1 = document.querySelector('#popup-wrapper-1');
         const popup2 = document.querySelector('#popup-wrapper-2');
-        const popup3 = document.querySelector('#popup-wrapper-3');
 
         document.querySelector('#open-popup-1').addEventListener('click', function () {
             openPopup(popup1);
@@ -147,18 +103,7 @@
         document.querySelector('#open-popup-2').addEventListener('click', function () {
             openPopup(popup2);
         });
-
-        document.querySelector('#open-popup-3').addEventListener('click', function () {
-            document.getElementById('settingsResponse').innerText = ""
-            openPopup(popup3);
-        });
     </script>
-
-    <script src="/static/scripts/submitMainForm.js"></script>
-
-    <script src="/static/scripts/updateSettings.js"></script>
-
-    <script src="/static/scripts/menuTriggers.js"></script>
 </body>
 
 </html>

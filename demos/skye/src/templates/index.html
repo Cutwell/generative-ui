@@ -21,285 +21,21 @@
     <link rel="stylesheet" type="text/css" href="{{href}}">
     {% endfor %}
     {% endif %}
-    <style>
-        #loading-wrapper,
-        .popup-wrapper {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 9999;
-            text-align: center;
-        }
-
-        .popup {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 20px;
-            border-radius: 5px;
-            background-color: initial;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            z-index: 10000;
-        }
-
-        .close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        .lds-ellipsis {
-            display: inline-block;
-            position: relative;
-            width: 80px;
-            height: 80px;
-        }
-
-        .lds-ellipsis div {
-            position: absolute;
-            top: 33px;
-            width: 13px;
-            height: 13px;
-            border-radius: 50%;
-            animation-timing-function: cubic-bezier(0, 1, 1, 0);
-        }
-
-        .lds-ellipsis div:nth-child(1) {
-            left: 8px;
-            animation: lds-ellipsis1 0.6s infinite;
-        }
-
-        .lds-ellipsis div:nth-child(2) {
-            left: 8px;
-            animation: lds-ellipsis2 0.6s infinite;
-        }
-
-        .lds-ellipsis div:nth-child(3) {
-            left: 32px;
-            animation: lds-ellipsis2 0.6s infinite;
-        }
-
-        .lds-ellipsis div:nth-child(4) {
-            left: 56px;
-            animation: lds-ellipsis3 0.6s infinite;
-        }
-
-        @keyframes lds-ellipsis1 {
-            0% {
-                transform: scale(0);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        @keyframes lds-ellipsis3 {
-            0% {
-                transform: scale(1);
-            }
-
-            100% {
-                transform: scale(0);
-            }
-        }
-
-        @keyframes lds-ellipsis2 {
-            0% {
-                transform: translate(0, 0);
-            }
-
-            100% {
-                transform: translate(24px, 0);
-            }
-        }
-
-        /* Container for the chat messages */
-        .chat-container {
-            height: 600px;
-            display: flex;
-            flex-direction: column;
-            max-width: 100%;
-            overflow-y: scroll;
-            border-radius: 10px;
-            padding: 10px;
-        }
-
-        /* Style for the assistant's message */
-        .assistant {
-            align-self: flex-start;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            max-width: 70%;
-            /* Adjust as needed */
-        }
-
-        .assistant:before {
-            content: "☀️ Skye";
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        /* Style for the user's message */
-        .user {
-            align-self: flex-end;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            max-width: 70%;
-            /* Adjust as needed */
-        }
-
-        .user:before {
-            content: "👤 You";
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .submitButton {
-            display: inline;
-            margin-right: 10px;
-        }
-
-        /* Default to light mode with a thin black border */
-        .chat-container {
-            border: 1px solid #dbdbdb;
-        }
-
-        /* Dark mode with a thin white border */
-        @media (prefers-color-scheme: dark) {
-            .chat-container {
-                border: 1px solid #526980;
-            }
-        }
-
-        #openai-fields {
-            display: none;
-            /* initially hide the API token input field */
-        }
-
-        #profileLink {
-            text-decoration: underline;
-        }
-    </style>
-    <style>
-        .container {
-            width: 80%;
-            margin: 0 auto;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .logo {
-            font-size: 3em;
-        }
-
-        .content {
-            margin: 40px 0;
-        }
-
-        .content h2 {
-            font-size: 2em;
-        }
-        .skyblue {
-            color: skyblue;
-        }
-
-        .content p {
-            font-size: 1.2em;
-            line-height: 1.6;
-        }
-
-        button {
-            background-color: skyblue;
-            color: white;
-            padding: 15px 25px;
-            font-size: 1.2em;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-
-        button:hover {
-            background-color: deepskyblue;
-        }
-
-        .thought {
-            display: flex;
-            background-color: skyblue;
-            padding: 20px;
-            border-radius: 30px;
-            min-width: 40px;
-            max-width: 220px;
-            min-height: 40px;
-            margin: 20px;
-            position: relative;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-
-        .thought:before,
-        .thought:after {
-            content: "";
-            background-color: skyblue;
-            border-radius: 50%;
-            display: block;
-            position: absolute;
-            z-index: -1;
-        }
-
-        .thought:before {
-            width: 44px;
-            height: 44px;
-            top: -12px;
-            left: 28px;
-            box-shadow: -50px 30px 0 -12px skyblue;
-        }
-
-        .thought:after {
-            bottom: -10px;
-            right: 26px;
-            width: 30px;
-            height: 30px;
-            box-shadow: 40px -34px 0 0 skyblue,
-                -28px -6px 0 -2px skyblue,
-                -24px 17px 0 -6px skyblue,
-                -5px 25px 0 -10px skyblue;
-
-        }
-    </style>
+    
+    <link rel="stylesheet" type="text/css" href="/static/styles/shared.css">
+    <link rel="stylesheet" type="text/css" href="/static/styles/index.css">
 </head>
 
 <body>
     <main>
-        <div id="loading-wrapper">
-            <div class="lds-ellipsis">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-        </div>
-
         <br>
 
         <div class="container">
             <div class="content">
                 <div class="thought logo">☀️💬</div>
-                <h2>Welcome! Meet <i class="skyblue">Skye</i></h2>
-                <p>Your personal emotional health companion. Skye is here to help you navigate your feelings and improve
-                    your emotional well-being. Chat with Skye anytime, anywhere.</p>
-                <button class="cta-button" id="demoButton">Get Started</button>
+                <h2>Welcome! Meet <i class="deepskyblue">Skye</i></h2>
+                <p>Your personal emotional health companion. Skye is here to help you navigate your feelings and improve your emotional well-being. Chat with Skye anytime, anywhere.</p>
+                <button class="button-primary" id="demoButton">Get Started</button>
             </div>
         </div>
 
@@ -352,37 +88,9 @@
         </p>
     </footer>
 
+    <script src="/static/scripts/popups.js"></script>
+
     <script>
-        const popupWrappers = document.querySelectorAll('.popup-wrapper');
-        const popups = document.querySelectorAll('.popup');
-        const closeButtons = document.querySelectorAll('.close-button');
-
-        function openPopup(popupWrapper) {
-            popupWrapper.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closePopup(popupWrapper) {
-            popupWrapper.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        popups.forEach(function (popup) {
-            popup.addEventListener('click', function (event) {
-                event.stopPropagation();
-            });
-        });
-
-        popupWrappers.forEach(function (popupWrapper, index) {
-            popupWrapper.addEventListener('click', function () {
-                closePopup(popupWrapper);
-            });
-
-            closeButtons[index].addEventListener('click', function () {
-                closePopup(popupWrapper);
-            });
-        });
-
         const popup1 = document.querySelector('#popup-wrapper-1');
         const popup2 = document.querySelector('#popup-wrapper-2');
 
@@ -395,13 +103,7 @@
         });
     </script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('demoButton').addEventListener("click", function () {
-                window.location.href = `/new`;
-            });
-        })
-    </script>
+    <script src="/static/scripts/demoButton.js"></script>
 </body>
 
 </html>

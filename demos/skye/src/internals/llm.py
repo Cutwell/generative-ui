@@ -26,6 +26,7 @@ Only use ONE label for checkboxes or radio inputs to summarise the question, don
 Add the "required" attribute to inputs, unless that input is optional.
 
 Try to only ask a maximum of 2 questions at once.
+If asking questions requiring a range response, e.g.: "rate your mood 1-5", ALWAYS indicate if 1 or 5 means high or low, e.g.: "1 is a low mood, 5 is a great mood".
 
 For example:
 

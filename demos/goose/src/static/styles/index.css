@@ -1,0 +1,42 @@
+.content {
+    text-align: center;
+    background-color: #388e3c;
+    padding: 50px;
+    border-radius: 10px;
+    color: #fff;
+}
+
+.logo {
+    font-size: 50px;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 18px;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+.cta-button {
+    background-color: #c8e6c9;
+    color: #1b5e20;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.cta-button:hover {
+    background-color: #aed581;
+}
+
+.goosegreen {
+    color: #81c784;
+}

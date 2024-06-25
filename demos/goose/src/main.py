@@ -1,13 +1,14 @@
 from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, StreamingResponse
 from contextlib import asynccontextmanager
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
+import os
 import uuid
 import pkg_resources
 
-from demos.skye.src.internals.llm import ChatUser
-from demos.skye.src.internals.mem import MemCache
+from demos.goose.src.internals.llm import ChatUser
+from demos.goose.src.internals.mem import MemCache
 
 
 @asynccontextmanager
@@ -20,7 +21,7 @@ async def lifespan(app: FastAPI):
     app.state.about = {
         "author": "Zachary",
         "profile": "https://github.com/Cutwell",
-        "description": "An emotional-health companion that escapes the chat box to learn more about you.",
+        "description": "A Goose chatbot demo.",
     }
     app.state.project = {
         "homepage": "https://github.com/Cutwell/generative-ui",
@@ -28,8 +29,8 @@ async def lifespan(app: FastAPI):
         "issues": "https://github.com/Cutwell/generative-ui/issues/new",
     }
     app.state.page = {
-        "name": "Skye - your emotional health companion",
-        "icon": "☀️",
+        "name": "Goose",
+        "icon": "🪿",
         "css": [
             "https://unpkg.com/normalize.css@8.0.1/normalize.css",
             "https://cdn.jsdelivr.net/npm/water.css@2/out/water.css",
@@ -37,6 +38,9 @@ async def lifespan(app: FastAPI):
     }
 
     app.state.cache = MemCache()
+
+    # Create test user for internal testing
+    app.state.cache.set(key="test", value=ChatUser(guid="test"))
 
     yield  # wait for shutdown
 
@@ -55,8 +59,8 @@ templates_path = pkg_resources.resource_filename(__name__, "templates")
 # Create Jinja2Templates instance with the templates directory
 templates = Jinja2Templates(directory=templates_path)
 
-# Mount /static directory for JS and CSS
-app.mount("/static", StaticFiles(directory="demos/skye/src/static"), name="static")
+# Mount /static directory to serve JS and CSS and images
+app.mount("/static", StaticFiles(directory="demos/goose/src/static"), name="static")
 
 
 @app.exception_handler(404)
@@ -111,25 +115,24 @@ def load_chat(request: Request, user_uuid: str):
 
     if not user:
         raise HTTPException(status_code=404, detail="User UUID not found")
-
-    if user.profile:
-        # Continue chat if profile exists
-        user.continue_chat()
-        html = user.get_next_html_block()
-    else:
-        # Else show entire conversation (implied new convo so only initial message)
-        html = user.get_all_html_blocks()
+    
+    html = user.get_all_html_blocks()
 
     return templates.TemplateResponse(
         "chat.html",
         {
             "request": request,
-            "form": html,
+            "chat": html,
             "page": app.state.page,
             "about": app.state.about,
             "project": app.state.project,
         },
     )
+
+
+async def stream_response(user: ChatUser, message: str):
+    for chunk in user.chat(message=message):
+        yield chunk
 
 
 @app.post("/chat/{user_uuid}", response_class=HTMLResponse)
@@ -148,11 +151,7 @@ async def post_html_page(request: Request, user_uuid: str):
     if not user:
         raise HTTPException(status_code=404, detail="User UUID not found")
 
-    user.chat(data=data)
-
-    html = user.get_next_html_block()
-
-    return JSONResponse(content={"content": html})
+    return StreamingResponse(stream_response(user=user, message=data["message"]))
 
 
 @app.post("/settings/{user_uuid}", response_class=HTMLResponse)

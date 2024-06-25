@@ -1,0 +1,85 @@
+.chat-container {
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    overflow-y: scroll;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.assistant {
+    align-self: flex-start;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    max-width: 70%;
+    background-color: #81c784;
+    padding: 10px;
+    min-width: 20vw;
+    text-align: left;
+}
+
+.assistant:before {
+    content: "🪿 They";
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.user {
+    align-self: flex-end;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    max-width: 70%;
+    background-color: #c8e6c9;
+    padding: 10px;
+    min-width: 20vw;
+    text-align: left;
+}
+
+.user:before {
+    content: "👤 You";
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+#openai-fields {
+    display: none;
+}
+
+.chat-input-container {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+.chat-textarea {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    resize: none;
+    max-height: 150px;
+    overflow-y: auto;
+    height: auto !important;
+    padding: 5px;
+    margin-right: 5px;
+    box-sizing: border-box;
+}
+
+.button-menu-container {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    gap: 10px;
+}
+
+.button-menu {
+    display: block;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: rgba(0, 0, 0, 0)
+}

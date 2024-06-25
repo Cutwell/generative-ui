@@ -1,0 +1,54 @@
+.chat-container {
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    overflow-y: scroll;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.assistant {
+    align-self: flex-start;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    max-width: 70%;
+    min-width: 20vw;
+    text-align: left;
+    padding: 10px;
+    background-color: lightskyblue;
+}
+
+.assistant:before {
+    content: "☀️ Skye";
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.user {
+    align-self: flex-end;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    max-width: 70%;
+    padding: 10px;
+    min-width: 20vw;
+    text-align: left;
+    background-color: skyblue;
+}
+
+.user:before {
+    content: "👤 You";
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.submitButton {
+    display: inline;
+    margin-right: 10px;
+}
+
+#openai-fields {
+    display: none;
+}
