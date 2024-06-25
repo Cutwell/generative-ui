@@ -1,11 +1,18 @@
+import ollama
+
 from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, StreamingResponse
+from fastapi.responses import (
+    HTMLResponse,
+    RedirectResponse,
+    JSONResponse,
+    StreamingResponse,
+)
 from contextlib import asynccontextmanager
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-import os
 import uuid
 import pkg_resources
+import asyncio
 
 from demos.goose.src.internals.llm import ChatUser
 from demos.goose.src.internals.mem import MemCache
@@ -115,7 +122,7 @@ def load_chat(request: Request, user_uuid: str):
 
     if not user:
         raise HTTPException(status_code=404, detail="User UUID not found")
-    
+
     html = user.get_all_html_blocks()
 
     return templates.TemplateResponse(
@@ -130,18 +137,42 @@ def load_chat(request: Request, user_uuid: str):
     )
 
 
-async def stream_response(user: ChatUser, message: str):
-    for chunk in user.chat(message=message):
-        yield chunk
+async def stream_llm_response(user: ChatUser):
+    response = ""
+
+    if user.model_name == "llama3":
+        for chunk in ollama.chat(
+            model="llama3",
+            messages=user.history,
+            stream=True,
+        ):
+            msg = chunk["message"]["content"] or "" or ""
+            response += msg
+            yield str(msg)
+            await asyncio.sleep(0.01)
+    elif user.model_name == "gpt-3.5-turbo":
+        for msg_chunk in user.openai_client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=user.history,
+            stream=True,
+        ):
+            msg = msg_chunk.choices[0].delta.content or ""
+            response += msg
+            yield str(msg)
+            await asyncio.sleep(0.01)
+    else:
+        raise Exception(f"Invalid model name: {user.model_name}")
+
+    user.history.append({"role": "assistant", "content": response})
 
 
-@app.post("/chat/{user_uuid}", response_class=HTMLResponse)
-async def post_html_page(request: Request, user_uuid: str):
+@app.post("/chat/{user_uuid}")
+async def post_html_page(request: Request, user_uuid: str) -> StreamingResponse:
     """
     Update current conversation.
 
     Returns:
-        JSONResponse: next HTML component for conversation.
+        StreamingResponse: chunks of LLM response.
     """
 
     data = await request.json()
@@ -151,7 +182,12 @@ async def post_html_page(request: Request, user_uuid: str):
     if not user:
         raise HTTPException(status_code=404, detail="User UUID not found")
 
-    return StreamingResponse(stream_response(user=user, message=data["message"]))
+    user.history.append({"role": "user", "content": data["message"]})
+
+    return StreamingResponse(
+        stream_llm_response(user=user),
+        media_type="text/event-stream",
+    )
 
 
 @app.post("/settings/{user_uuid}", response_class=HTMLResponse)

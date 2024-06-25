@@ -45,7 +45,8 @@
             </div>
             <form id="mainForm" method="post" action="/submit">
                 <div class="chat-input-container">
-                    <textarea id="chatbot-input" name="message" class="chat-textarea" placeholder="Type here.."></textarea>
+                    <textarea id="chatbot-input" name="message" class="chat-textarea"
+                        placeholder="Type here.."></textarea>
                     <button class="submit-btn button-primary" type="submit">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                             viewBox="0 0 16 16">
@@ -144,8 +145,6 @@
 
     <script src="/static/scripts/loadGUID.js"></script>
 
-    <script src="/static/scripts/popups.js"></script>
-
     <script src="/static/scripts/chatControls.js"></script>
 
     <script src="/static/scripts/updateSettings.js"></script>
@@ -155,6 +154,37 @@
     <script src="/static/scripts/homeButton.js"></script>
 
     <script>
+        const popupWrappers = document.querySelectorAll('.popup-wrapper');
+        const popups = document.querySelectorAll('.popup');
+        const closeButtons = document.querySelectorAll('.close-button');
+
+        function openPopup(popupWrapper) {
+            popupWrapper.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePopup(popupWrapper) {
+            popupWrapper.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        popups.forEach(function (popup) {
+            popup.addEventListener('click', function (event) {
+                event.stopPropagation();
+            });
+        });
+
+        popupWrappers.forEach(function (popupWrapper, index) {
+            popupWrapper.addEventListener('click', function () {
+                closePopup(popupWrapper);
+            });
+
+            closeButtons[index].addEventListener('click', function () {
+                closePopup(popupWrapper);
+            });
+        });
+
+
         const popup1 = document.querySelector('#popup-wrapper-1');
         const popup2 = document.querySelector('#popup-wrapper-2');
         const popup3 = document.querySelector('#popup-wrapper-3');

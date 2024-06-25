@@ -16,15 +16,19 @@ function submit_message() {
   document.getElementById('loading-wrapper').style.display = 'block';
   document.body.style.overflow = 'hidden';
 
-  // save the message from the form into a JSON string
+  // Save the message from the form into a JSON string
   const body = JSON.stringify(formObject);
 
-  // clear the form textarea input
+  // Clear the form textarea input
   document.getElementById("chatbot-input").value = "";
-  // append the message to the chat history
+  // Append the message to the chat history
   chatbox.insertAdjacentHTML('beforeend', `<div class="user">${formObject["message"]}</div>`);
+  // Create a new div for the server response
+  const responseDiv = document.createElement('div');
+  responseDiv.classList.add('response');
+  chatbox.appendChild(responseDiv);
 
-  // scroll to bottom of chat
+  // Scroll to bottom of chat
   chatbox.scrollTo({
     top: chatbox.scrollHeight - chatbox.clientHeight,
     behavior: 'smooth'
@@ -37,25 +41,35 @@ function submit_message() {
   })
     .then(response => {
       const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
       return new ReadableStream({
         start(controller) {
           function push() {
             reader.read().then(({ done, value }) => {
               if (done) {
+                if (buffer) {
+                  //responseDiv.innerHTML += buffer;
+                  chatbox.scrollTo({
+                    top: chatbox.scrollHeight - chatbox.clientHeight,
+                    behavior: 'smooth'
+                  });
+                }
                 console.log('Stream complete');
                 controller.close();
                 return;
               }
-              // Assuming value is Uint8Array or ArrayBuffer, convert to text
-              const text = new TextDecoder().decode(value);
-              console.log('Received chunk:', text);
-              // Append chunk to chatbox
-              chatbox.insertAdjacentHTML('beforeend', text);
-              // scroll to bottom of chat
+              // Decode and append the chunk to the buffer
+              buffer += decoder.decode(value, { stream: true });
+
+              // Update the response div with the accumulated buffer
+              responseDiv.innerHTML = buffer;
               chatbox.scrollTo({
                 top: chatbox.scrollHeight - chatbox.clientHeight,
                 behavior: 'smooth'
               });
+
               push(); // Continue reading
             }).catch(error => {
               console.error('Error reading stream:', error);
@@ -74,11 +88,11 @@ function submit_message() {
       document.getElementById('response').innerText = 'Fetch error: ' + error;
     })
     .finally(() => {
-      // hide the loading wrapper
+      // Hide the loading wrapper
       document.getElementById('loading-wrapper').style.display = 'none';
       document.body.style.overflow = 'auto';
 
-      // scroll to bottom of chat
+      // Scroll to bottom of chat
       chatbox.scrollTo({
         top: chatbox.scrollHeight - chatbox.clientHeight,
         behavior: 'smooth'

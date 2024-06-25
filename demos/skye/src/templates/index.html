@@ -21,7 +21,7 @@
     <link rel="stylesheet" type="text/css" href="{{href}}">
     {% endfor %}
     {% endif %}
-    
+
     <link rel="stylesheet" type="text/css" href="/static/styles/shared.css">
     <link rel="stylesheet" type="text/css" href="/static/styles/index.css">
 </head>
@@ -34,7 +34,8 @@
             <div class="content">
                 <div class="thought logo">☀️💬</div>
                 <h2>Welcome! Meet <i class="deepskyblue">Skye</i></h2>
-                <p>Your personal emotional health companion. Skye is here to help you navigate your feelings and improve your emotional well-being. Chat with Skye anytime, anywhere.</p>
+                <p>Your personal emotional health companion. Skye is here to help you navigate your feelings and improve
+                    your emotional well-being. Chat with Skye anytime, anywhere.</p>
                 <button class="button-primary" id="demoButton">Get Started</button>
             </div>
         </div>
@@ -88,9 +89,38 @@
         </p>
     </footer>
 
-    <script src="/static/scripts/popups.js"></script>
-
     <script>
+        const popupWrappers = document.querySelectorAll('.popup-wrapper');
+        const popups = document.querySelectorAll('.popup');
+        const closeButtons = document.querySelectorAll('.close-button');
+
+        function openPopup(popupWrapper) {
+            popupWrapper.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePopup(popupWrapper) {
+            popupWrapper.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        popups.forEach(function (popup) {
+            popup.addEventListener('click', function (event) {
+                event.stopPropagation();
+            });
+        });
+
+        popupWrappers.forEach(function (popupWrapper, index) {
+            popupWrapper.addEventListener('click', function () {
+                closePopup(popupWrapper);
+            });
+
+            closeButtons[index].addEventListener('click', function () {
+                closePopup(popupWrapper);
+            });
+        });
+
+
         const popup1 = document.querySelector('#popup-wrapper-1');
         const popup2 = document.querySelector('#popup-wrapper-2');
 

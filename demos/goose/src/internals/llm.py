@@ -1,4 +1,3 @@
-import ollama
 import openai
 
 SYSTEM_PROMPT = """\
@@ -23,8 +22,7 @@ Format your output as HTML. I.e.:
 <div class="assistant">
     <b>"Honk"</b>, <i>whispering</i>
 </div>
-```
-"""
+```"""
 
 
 class ChatUser:
@@ -35,17 +33,6 @@ class ChatUser:
         self.history = []
 
         self.reset()
-
-    def chat(self, message: str):
-        self.history.append({"role": "user", "content": message})
-
-        # Step the chat by 1
-        response = ""
-        for chunk in self.call_llm():
-            response += chunk
-            yield chunk
-
-        self.history.append({"role": "assistant", "content": response})
 
     def reset(self):
         self.history = [{"role": "system", "content": SYSTEM_PROMPT}]
@@ -80,26 +67,6 @@ class ChatUser:
         content = self.history[-1]["content"]
         content = self.strip_html_markdown_tags(markdown=content)
         return "<br>" + content
-
-    def call_llm(self):
-        if self.model_name == "llama3":
-            stream = ollama.chat(
-                model='llama3',
-                messages=self.history,
-                stream=True,
-            )
-
-            for chunk in stream:
-                yield chunk['message']['content']
-
-        elif self.model_name == "gpt-3.5-turbo":
-            chat_completion = self.openai_client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=self.history,
-            )
-            return chat_completion.choices[0].message.content
-        else:
-            raise Exception(f"Invalid model name: {self.model_name}")
 
     def update_settings(self, model_name, openai_api_key):
         if model_name == "gpt-3.5-turbo":
