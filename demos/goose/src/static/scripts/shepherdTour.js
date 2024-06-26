@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
         id: 'step-03',
         text: 'Click here to open the LLM Settings pop-up window - choose between Llama 3 and OpenAI GPT 3.5 (switch LLM anytime, even mid-session) (OpenAI reqiures API token, tokens are saved per chat session).',
         attachTo: {
-            element: '#llm-settings',
+            element: '#open-popup-3',
             on: 'top'
         },
         buttons: [
