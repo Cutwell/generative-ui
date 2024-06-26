@@ -133,37 +133,9 @@
 
     <script src="/static/scripts/loadingWrapperTriggers.js"></script>
 
+    <script src="/static/scripts/popups.js"></script>
+
     <script>
-        const popupWrappers = document.querySelectorAll('.popup-wrapper');
-        const popups = document.querySelectorAll('.popup');
-        const closeButtons = document.querySelectorAll('.close-button');
-
-        function openPopup(popupWrapper) {
-            popupWrapper.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closePopup(popupWrapper) {
-            popupWrapper.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        popups.forEach(function (popup) {
-            popup.addEventListener('click', function (event) {
-                event.stopPropagation();
-            });
-        });
-
-        popupWrappers.forEach(function (popupWrapper, index) {
-            popupWrapper.addEventListener('click', function () {
-                closePopup(popupWrapper);
-            });
-
-            closeButtons[index].addEventListener('click', function () {
-                closePopup(popupWrapper);
-            });
-        });
-
         const popup1 = document.querySelector('#popup-wrapper-1');
         const popup2 = document.querySelector('#popup-wrapper-2');
         const popup3 = document.querySelector('#popup-wrapper-3');

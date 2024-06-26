@@ -159,6 +159,8 @@ async def stream_llm_response(user: ChatUser):
             msg = msg_chunk.choices[0].delta.content or ""
             response += msg
             yield str(msg)
+            # small sleep is required to send each chunk individually
+            # else FastAPI combines yielded chunks into a single output
             await asyncio.sleep(0.01)
     else:
         raise Exception(f"Invalid model name: {user.model_name}")

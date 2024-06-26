@@ -45,8 +45,9 @@
             </div>
             <form id="mainForm" method="post" action="/submit">
                 <div class="chat-input-container">
-                    <textarea id="chatbot-input" name="message" class="chat-textarea"
+                    <textarea id="chatbot-input" name="message" class="chat-textarea" rows="1"
                         placeholder="Type here.."></textarea>
+
                     <button class="submit-btn button-primary" type="submit">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                             viewBox="0 0 16 16">
@@ -131,17 +132,18 @@
             </div>
         </div>
 
-    </main>
+        <footer class="center footer-nav">
+            <p>
+                Powered by <a target="_blank"
+                    href="https://github.com/Cutwell/generative-ui"><code>Generative UI</code></a>
+                |
+                <a href="#" id="open-popup-1">☀️ About</a> |
+                <a href="#" id="open-popup-2">🛟 Help</a> |
+                <a href="#" id="open-popup-3">⚙️ LLM Settings</a>
+            </p>
+        </footer>
 
-    <footer class="center">
-        <p>
-            Powered by <a target="_blank" href="https://github.com/Cutwell/generative-ui"><code>Generative UI</code></a>
-            |
-            <a href="#" id="open-popup-1">☀️ About</a> |
-            <a href="#" id="open-popup-2">🛟 Help</a> |
-            <a href="#" id="open-popup-3">⚙️ LLM Settings</a>
-        </p>
-    </footer>
+    </main>
 
     <script src="/static/scripts/loadGUID.js"></script>
 
@@ -153,38 +155,9 @@
 
     <script src="/static/scripts/homeButton.js"></script>
 
+    <script src="/static/scripts/popups.js"></script>
+
     <script>
-        const popupWrappers = document.querySelectorAll('.popup-wrapper');
-        const popups = document.querySelectorAll('.popup');
-        const closeButtons = document.querySelectorAll('.close-button');
-
-        function openPopup(popupWrapper) {
-            popupWrapper.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closePopup(popupWrapper) {
-            popupWrapper.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        popups.forEach(function (popup) {
-            popup.addEventListener('click', function (event) {
-                event.stopPropagation();
-            });
-        });
-
-        popupWrappers.forEach(function (popupWrapper, index) {
-            popupWrapper.addEventListener('click', function () {
-                closePopup(popupWrapper);
-            });
-
-            closeButtons[index].addEventListener('click', function () {
-                closePopup(popupWrapper);
-            });
-        });
-
-
         const popup1 = document.querySelector('#popup-wrapper-1');
         const popup2 = document.querySelector('#popup-wrapper-2');
         const popup3 = document.querySelector('#popup-wrapper-3');

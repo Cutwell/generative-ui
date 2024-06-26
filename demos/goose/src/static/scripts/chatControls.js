@@ -100,12 +100,7 @@ function submit_message() {
     });
 }
 
-document.getElementById('chatbot-input').addEventListener('keydown', function (event) {
-  if (event.key === 'Enter' && !event.shiftKey) {
-    event.preventDefault(); // Prevent default behavior (new line)
-    submit_message(); // Submit the form
-  }
-});
+
 
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('mainForm');
@@ -122,4 +117,27 @@ document.addEventListener('DOMContentLoaded', function () {
     top: chatbox.scrollHeight - chatbox.clientHeight,
     behavior: 'smooth'
   });
+});
+
+const textarea = document.getElementById('chatbot-input');
+
+textarea.addEventListener('keydown', function (event) {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault(); // Prevent default behavior (new line)
+    submit_message(); // Submit the form
+  }
+});
+
+textarea.addEventListener('input', () => {
+  textarea.style.height = 'auto'; // Reset the height
+  const scrollHeight = textarea.scrollHeight; // Get the scroll height
+  const maxHeight = parseInt(getComputedStyle(textarea).lineHeight) * 5 + 20; // Calculate max height for 5 lines + padding
+
+  if (scrollHeight > maxHeight) {
+    textarea.style.height = `${maxHeight}px`;
+    textarea.style.overflowY = 'scroll'; // Enable scrolling
+  } else {
+    textarea.style.height = `${scrollHeight}px`;
+    textarea.style.overflowY = 'hidden'; // Hide the scrollbar
+  }
 });

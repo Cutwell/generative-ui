@@ -33,8 +33,8 @@
         <div class="container">
             <div class="content">
                 <div class="logo">🪶💬</div>
-                <h2>"Honk", <i class="goosegreen">welcomingly.</i></h2>
-                <p>"Honk", <i>explaining.</i></p>
+                <h2 class="main-header">"Honk", <i class="goosegreen">welcomingly.</i></h2>
+                <p class="main-subheader">"Honk", <i>explaining.</i></p>
                 <button class="cta-button" id="demoButton">"Honk", <i>inviting.</i></button>
             </div>
         </div>
@@ -90,37 +90,9 @@
 
     <script src="/static/scripts/demoButton.js"></script>
 
+    <script src="/static/scripts/popups.js"></script>
+
     <script>
-        const popupWrappers = document.querySelectorAll('.popup-wrapper');
-        const popups = document.querySelectorAll('.popup');
-        const closeButtons = document.querySelectorAll('.close-button');
-
-        function openPopup(popupWrapper) {
-            popupWrapper.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closePopup(popupWrapper) {
-            popupWrapper.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        popups.forEach(function (popup) {
-            popup.addEventListener('click', function (event) {
-                event.stopPropagation();
-            });
-        });
-
-        popupWrappers.forEach(function (popupWrapper, index) {
-            popupWrapper.addEventListener('click', function () {
-                closePopup(popupWrapper);
-            });
-
-            closeButtons[index].addEventListener('click', function () {
-                closePopup(popupWrapper);
-            });
-        });
-
         const popup1 = document.querySelector('#popup-wrapper-1');
         const popup2 = document.querySelector('#popup-wrapper-2');
 
