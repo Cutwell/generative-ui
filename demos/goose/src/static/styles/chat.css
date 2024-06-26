@@ -90,3 +90,20 @@
     margin-top: 0 !important;
     padding-top: 0 !important;
 }
+
+.shepherd-footer {
+    align-items: center;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 0.75rem 0.75rem;
+
+    .shepherd-button:last-child {
+        margin-right: 0;
+    }
+
+    .shepherd-progress {
+        font-size: 0.8rem;
+    }
+}

@@ -50,7 +50,10 @@ function submit_message() {
             reader.read().then(({ done, value }) => {
               if (done) {
                 if (buffer) {
-                  //responseDiv.innerHTML += buffer;
+                  // Hide the loading wrapper
+                  document.getElementById('loading-wrapper').style.display = 'none';
+                  document.body.style.overflow = 'auto';
+
                   chatbox.scrollTo({
                     top: chatbox.scrollHeight - chatbox.clientHeight,
                     behavior: 'smooth'
@@ -86,12 +89,12 @@ function submit_message() {
     .catch(error => {
       console.error('Fetch error:', error);
       document.getElementById('response').innerText = 'Fetch error: ' + error;
-    })
-    .finally(() => {
+
       // Hide the loading wrapper
       document.getElementById('loading-wrapper').style.display = 'none';
       document.body.style.overflow = 'auto';
-
+    })
+    .finally(() => {
       // Scroll to bottom of chat
       chatbox.scrollTo({
         top: chatbox.scrollHeight - chatbox.clientHeight,

@@ -36,7 +36,7 @@ async def lifespan(app: FastAPI):
         "issues": "https://github.com/Cutwell/generative-ui/issues/new",
     }
     app.state.page = {
-        "name": "Goose",
+        "name": "Untitled Goose Chatbot",
         "icon": "🪿",
         "css": [
             "https://unpkg.com/normalize.css@8.0.1/normalize.css",

@@ -24,11 +24,13 @@
 
     <link rel="stylesheet" type="text/css" href="/static/styles/shared.css">
     <link rel="stylesheet" type="text/css" href="/static/styles/chat.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@8.3.1/dist/css/shepherd.css" />
 </head>
 
 <body>
     <main>
-        <div class="popup-wrapper" id="loading-wrapper">
+        <div id="loading-wrapper">
             <div class="lds-ellipsis">
                 <div></div>
                 <div></div>
@@ -139,7 +141,8 @@
                 |
                 <a href="#" id="open-popup-1">☀️ About</a> |
                 <a href="#" id="open-popup-2">🛟 Help</a> |
-                <a href="#" id="open-popup-3">⚙️ LLM Settings</a>
+                <a id="llm-settings" href="#" id="open-popup-3">⚙️ LLM Settings</a> |
+                <a id="tourButton" href="#">🧭 Restart the tour</a>
             </p>
         </footer>
 
@@ -152,6 +155,8 @@
     <script src="/static/scripts/updateSettings.js"></script>
 
     <script src="/static/scripts/resetButton.js"></script>
+
+    <script src="/static/scripts/tourButton.js"></script>
 
     <script src="/static/scripts/homeButton.js"></script>
 
@@ -175,6 +180,10 @@
             openPopup(popup3);
         });
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/shepherd.js@8.3.1/dist/js/shepherd.min.js"></script>
+
+    <script src="/static/scripts/shepherdTour.js"></script>
 </body>
 
 </html>
