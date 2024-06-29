@@ -2,7 +2,7 @@
 name = "generative-ui-demo"
 version = "0.1.0"
 description = "Help your LLM apps escape the chat box!"
-authors = ["zacharysf <zachary.smith@schemeflow.com>"]
+authors = ["Zachary Smith"]
 license = "MIT"
 
 [tool.poetry.dependencies]
